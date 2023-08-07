@@ -5,7 +5,11 @@ import bcrypt from 'bcrypt'
 
 import jwt from 'jsonwebtoken'
 
+import transporter from '../config/emailConfig.js'
+
 class  UserController{
+
+    // User Registration
 
 static userRegistration = async(req,res) =>{
 
@@ -15,8 +19,11 @@ const {name,email,password,password_confirmation,tc} = req.body
 const user = await UserModel.findOne({email:email})
 
 if(user){
+
     res.send({"status":"failed","message":"Email already exists"})
-}else{
+
+}
+else{
     if(name && email && password && password_confirmation && tc){
 
   
@@ -86,53 +93,187 @@ if(user){
 
 }
 
-static userLogin = async (req,res) =>{
+// User Login
+
+static userLogin = async (req, res) => {
+
+    try {
 
 
-   try {
+      const { email, password } = req.body
 
-    const {email,password} = req.body
+      if (email && password) {
 
-    if(email && password){
+        const user = await UserModel.findOne({ email: email })
 
+        if (user != null) {
+
+          const isMatch = await bcrypt.compare(password, user.password)
+
+          if ((user.email === email) && isMatch) {
+
+            // Generate JWT Token
+            const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '5d' })
+
+            res.send({ "status": "success", "message": "Login Success", "token": token })
+
+          } else {
+
+            res.send({ "status": "failed", "message": "Email or Password is not Valid" })
+
+           }
+
+        } else {
+
+          res.send({ "status": "failed", "message": "You are not a Registered User" })
+        }
+
+      } else {
+
+        res.send({ "status": "failed", "message": "All Fields are Required" })
+
+
+
+      }
+
+    } 
+    catch (error) {
+
+      console.log(error)
+
+      res.send({ "status": "failed", "message": "Unable to Login" })
+    }
+  }
+
+// Change User password but old password is known to user
+
+
+static changeUserPassword = async(req,res)=>{
+
+
+const {password,password_confirmation} = req.body
+
+if(password && password_confirmation ){
+
+
+    if(password !== password_confirmation){
+
+        res.send({"status":"failed","message":"Password does not match"})
+
+
+    }else{
+
+        const salt = await bcrypt.genSalt(10)
+        const newHashPassword = await bcrypt.hash(password,salt)
+
+        await UserModel.findByIdAndUpdate(req.user._id,{$set:{password:newHashPassword}})
+
+        res.send({"status":"success","message":"Password is changed succesfully"})
+
+
+    }
+
+
+}else{
+
+    res.send({"status":"failed","message":"All fields are required"})
+
+}
+
+}
+
+// Logged User Details
+
+static loggedUser = async(req,res) =>{
+
+res.send({"user":req.user})
+
+
+
+}
+
+// Send User Password Reset Email
+
+static sendUserPasswordResetEmail = async (req,res) =>{
+
+    const {email} = req.body
+
+    if (email) {
 
         const user = await UserModel.findOne({email:email})
 
-        if(user!=null){
+        
 
+        if(user) {
 
-            const isMatch = await bcrypt.compare(password,user.password)
-         
-            if((user.email === email) && isMatch){
+            const secret = user._id + process.env.JWT_SECRET_KEY
+            
+            // Generate JWT Token
 
-                res.status(201).send({"status":"success","message":"Logined successfuly"})
+            const token = jwt.sign({ userID: user._id }, secret, { expiresIn: '15m' })
 
+            const link=`http://127.0.0.1:3000/api/user/reset/${user._id}/${token}`
 
-            }else{
+            // react
 
-                res.send({"status":"failed","message":"Email or Password is not valid"})
+            // /api/user/reset/:id/:token
+                
+            console.log(link)
 
-            }
+            //Send Email
+          let info = await transporter.sendMail({
+           from: process.env.EMAIL_FROM,
+            to: user.email,
+            subject: "GeekShop - Password Reset Link",
+            html: `<a href=${link}>Click Here</a> to Reset Your Password`
+        })
 
+            res.send({"status":"success","message":"Password Reset Email Sent... Please check your Email","info":info})
 
-        }else{
+        } else {
 
-            res.send({"status":"failed","message":"You are not a registered password"})
+            res.send({"status":"failed","message":"Email doesn't exists"})
 
+            
         }
-    }else{
+        
+    } else {
+        
+        res.send({"status":"failed","message":"Email Field is required"})
 
-
-        res.send({"status":"failed","message":"All fields are required"})
 
     }
-    
-   } catch (error) {
-
-    console.log(error)
-    
-   }
 }
+
+// User Password Reset
+
+static userPasswordReset = async (req, res) => {
+    const { password, password_confirmation } = req.body
+    const { id, token } = req.params
+    const user = await UserModel.findById(id)
+    const new_secret = user._id + process.env.JWT_SECRET_KEY
+    try {
+      jwt.verify(token, new_secret)
+      if (password && password_confirmation) {
+        if (password !== password_confirmation) {
+          res.send({ "status": "failed", "message": "New Password and Confirm New Password doesn't match" })
+        } else {
+          const salt = await bcrypt.genSalt(10)
+          const newHashPassword = await bcrypt.hash(password, salt)
+          await UserModel.findByIdAndUpdate(user._id, { $set: { password: newHashPassword } })
+          res.send({ "status": "success", "message": "Password Reset Successfully" })
+        }
+      } else {
+        res.send({ "status": "failed", "message": "All Fields are Required" })
+      }
+    } catch (error) {
+      console.log(error)
+      res.send({ "status": "failed", "message": "Invalid Token" })
+    }
+  }
+
+
+
 
 }
 

@@ -25,3 +25,6 @@ https://medium.com/analytics-vidhya/the-complete-guide-to-npm-ac52fbc43f6c#id_to
 scripts": {
     "start": "node app", -  for production To run npm run start
     "dev":"nodemon app" - for development  To run npm run dev
+
+
+$2b$10$I5Zm3dGVSNManXcjco1x/upuOVRmHLkh6lN2MLsxmV2FWEHsyc98y
