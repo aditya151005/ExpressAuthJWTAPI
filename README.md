@@ -8,17 +8,22 @@
 
 # API For various functionalities have been develoved - 
 
-![UserRegistration](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/ddd4f7a9-6d6b-4c20-9f02-64a7b0316574)
+![UserRegistration](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/2e1ba27b-a713-4c6d-b69e-8c526cb5f120)
 
-![UserLogin](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/4145fda3-717b-45bf-9fa2-305759d76de8)
+![UserLogin](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/d8fa2150-a371-4c6b-b9c8-45c659e86ba5)
 
-![UserDetails](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/c8371e91-4e3a-4d0f-b06f-f81c78f2965e)
+![UserDetails](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/30e5df62-3e73-416a-8c65-a57f5ae6d514)
 
-![ChangePassword](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/57031990-d364-4b59-9e9b-c0d92d61dc4b)
+![ChangePassword](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/2ff6c72c-e2a0-473e-8a0d-4813349be169)
 
-![SendPasswordResetEmail](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/71ff4c72-d523-4d30-b423-cf58f0543574)
+![SendPasswordResetEmail](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/be48013a-6632-4616-9336-08a15f61a15e)
 
-![PasswordReset](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/5aa17089-e30e-47e4-8c74-3e3c3579f866)
+![PasswordReset](https://github.com/aditya151005/ExpressAuthJWTAPI/assets/72004154/6191f26e-92dd-4ed7-ba4a-9f55f1a5dc9b)
+
+
+
+
+
 
 
 
